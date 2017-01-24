@@ -2,6 +2,6 @@ package main
 
 // Structure of triangles
 type TriangleStructure struct {
-	Nodes, Ribs []int
-	Triangles   []*TriangleStructure
+	IndexNodes, Ribs []uint64
+	Triangles        []*TriangleStructure
 }

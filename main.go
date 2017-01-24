@@ -1,6 +1,10 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/Konstantin8105/TriangulationByGo/folder1"
+)
 
 func main() {
 	fmt.Println("Hello World")
@@ -27,5 +31,5 @@ func main() {
 	}
 	fmt.Println(box)
 	fmt.Printf("Point:\n%t\n", box.insideBox(point))
-
+	strange.Show()
 }

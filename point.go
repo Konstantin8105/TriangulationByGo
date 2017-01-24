@@ -17,6 +17,7 @@ func (p *Point) String() string {
 	return fmt.Sprintf("Point(%e,%e)", p.x, p.y)
 }
 
+// TODO: use DEEP COMPARE
 func (p *Point) equals(point *Point) bool {
 	if math.Abs(p.x-point.x) > precisionEpsilon() || math.Abs(p.y-point.y) > precisionEpsilon() {
 		return false

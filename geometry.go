@@ -53,10 +53,12 @@ func isAtRightOfByPOINT_LINE_STATE(pol POINT_LINE_STATE) bool {
 }
 
 func distanceLineAndPoint(lineP1 *Point, lineP2 *Point, p *Point) float64 {
-	var A float64
-	var B float64 = 1
-	var C float64
-	var distance float64
+	var (
+		A        float64
+		B        float64 = 1
+		C        float64
+		distance float64
+	)
 	if math.Abs(lineP2.y-lineP1.y) < math.Abs(lineP2.x-lineP1.x) {
 		A = -(lineP2.y - lineP1.y) / (lineP2.x - lineP1.x)
 		C = -lineP1.y - A*lineP1.x
@@ -74,15 +76,16 @@ func det(a [3][3]float64) float64 {
 }
 
 func isPointInCircle(circlePoints []Point, point *Point) bool {
+	var (
+		x1x float64 = circlePoints[0].x - point.x
+		y1y float64 = circlePoints[0].y - point.y
 
-	var x1x float64 = circlePoints[0].x - point.x
-	var y1y float64 = circlePoints[0].y - point.y
+		x2x float64 = circlePoints[1].x - point.x
+		y2y float64 = circlePoints[1].y - point.y
 
-	var x2x float64 = circlePoints[1].x - point.x
-	var y2y float64 = circlePoints[1].y - point.y
-
-	var x3x float64 = circlePoints[2].x - point.x
-	var y3y float64 = circlePoints[2].y - point.y
+		x3x float64 = circlePoints[2].x - point.x
+		y3y float64 = circlePoints[2].y - point.y
+	)
 
 	var result float64 = det([3][3]float64{
 		{x1x*x1x + y1y*y1y, x1x, y1y},
@@ -116,7 +119,7 @@ const (
 	POINT_OUTSIDE_LINE_2
 )
 
-func statePointInTriangle(p *Point, trianglePoints []*Point, values []POINT_LINE_STATE) POINT_TRIANGLE_STATE {
+func statePointInTriangle(p *Point, trianglePoints [3]*Point, values [3]POINT_LINE_STATE) POINT_TRIANGLE_STATE {
 	for _, t := range trianglePoints {
 		if p.equals(t) {
 			return POINT_ON_CORNER

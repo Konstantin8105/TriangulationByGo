@@ -10,27 +10,27 @@ func eps() float64 {
 	return 1e-10
 }
 
-type POINT_LINE_STATE uint8
+type pointLineState uint8
 
 const (
-	RESULT_IS_LESS_ZERO POINT_LINE_STATE = iota
-	RESULT_IS_ZERO
-	RESULT_IS_MORE_ZERO
+	resultIsLessZero pointLineState = iota
+	resultIsZero
+	resultIsMoreZero
 )
 
 func calculateDouble(p1, p2, p3 point.Point) float64 {
 	return (p2.Y-p1.Y)*(p3.X-p2.X) - (p3.Y-p2.Y)*(p2.X-p1.X)
 }
 
-func calculateValuepointOnLine(p1, p2, p3 point.Point) POINT_LINE_STATE {
+func calculateValuepointOnLine(p1, p2, p3 point.Point) pointLineState {
 	value := calculateDouble(p1, p2, p3)
 	if value > eps() {
-		return RESULT_IS_MORE_ZERO
+		return resultIsMoreZero
 	}
 	if math.Abs(value) > eps() {
-		return RESULT_IS_LESS_ZERO
+		return resultIsLessZero
 	}
-	return RESULT_IS_ZERO
+	return resultIsZero
 }
 
 func distanceLineAndPoint(lineP1 point.Point, lineP2 point.Point, p point.Point) float64 {
@@ -154,9 +154,9 @@ func (tr *Triangulation) statePointInTriangle(ip int, tris [3]int) pointTriangle
 			tr.ps[ts[i].trisBegin],
 			tr.ps[ts[i].trisEnd],
 		) {
-		case RESULT_IS_ZERO:
+		case resultIsZero:
 			return ts[i].onLine
-		case RESULT_IS_MORE_ZERO:
+		case resultIsMoreZero:
 			return ts[i].outsideLine
 		}
 	}

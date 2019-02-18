@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 
+	"github.com/Konstantin8105/tp"
 	"github.com/Konstantin8105/tp/bb"
 	"github.com/Konstantin8105/tp/point"
 )
@@ -19,10 +20,10 @@ func main() {
 		point.Point{X: 500.0, Y: 500.0},
 		point.Point{X: 100.0, Y: 0.0},
 	}
-	// triangulation := tp.Run(coordinates)
-	//
-	// fmt.Println("Trinaguation result:")
-	// fmt.Printf("%t\n", triangulation)
+	triangulation := tp.Run(coordinates)
+
+	fmt.Println("Trinaguation result:")
+	fmt.Printf("%t\n", triangulation)
 
 	fmt.Println("BorderBox result:")
 	box := bb.New()

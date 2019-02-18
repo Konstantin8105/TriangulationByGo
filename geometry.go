@@ -1,7 +1,9 @@
 package tp
 
 import (
+	"log"
 	"math"
+	"os"
 
 	"github.com/Konstantin8105/tp/point"
 )
@@ -9,6 +11,11 @@ import (
 func eps() float64 {
 	return 1e-10
 }
+
+var (
+	debugFlag bool = true
+	logger         = log.New(os.Stdout, "logger: ", log.Lshortfile)
+)
 
 type pointLineState uint8
 
@@ -19,7 +26,12 @@ const (
 )
 
 func calculateDouble(p1, p2, p3 point.Point) float64 {
-	return (p2.Y-p1.Y)*(p3.X-p2.X) - (p3.Y-p2.Y)*(p2.X-p1.X)
+	v := (p2.Y-p1.Y)*(p3.X-p2.X) - (p3.Y-p2.Y)*(p2.X-p1.X)
+	if debugFlag {
+		logger.Printf("calculateDouble:\tp=%s\tp=%s\tp=%s\tv=%8.4f",
+			p1, p2, p3, v)
+	}
+	return v
 }
 
 func calculateValuepointOnLine(p1, p2, p3 point.Point) pointLineState {
@@ -92,11 +104,41 @@ const (
 	pointOutsideLine2
 )
 
+func (p pointTriangleState) String() string {
+	switch p {
+	case pointOnLine0:
+		return "point on line 0"
+	case pointOnLine1:
+		return "point on line 1"
+	case pointOnLine2:
+		return "point on line 2"
+	case pointOnCorner:
+		return "point on corner"
+	case pointInside:
+		return "point inside triangle"
+	case pointOutside:
+		return "point outside"
+	case pointOutsideLine0:
+		return "point outside line 0"
+	case pointOutsideLine1:
+		return "point outside line 1"
+	case pointOutsideLine2:
+		return "point outside line 2"
+	}
+	panic("add in String: point in Triangle")
+}
+
 func isNear(p1, p2 point.Point) bool {
 	return math.Hypot(p1.X-p2.X, p1.Y-p2.Y) < eps()
 }
 
-func (tr *Triangulation) statePointInTriangle(ip int, tris [3]int) pointTriangleState {
+func (tr *Triangulation) statePointInTriangle(ip int, tris [3]int) (state pointTriangleState) {
+	defer func() {
+		if debugFlag {
+			logger.Printf("statePointInTriangle :\tip=%d\ttris=%v\tstate=%s",
+				ip, tris, state)
+		}
+	}()
 	for i := range tris {
 		if isNear(tr.ps[ip], tr.ps[tris[i]]) {
 			return pointOnCorner

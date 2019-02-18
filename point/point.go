@@ -11,7 +11,7 @@ type Point struct {
 }
 
 // String return string with coordinates
-func (p *Point) String() string {
+func (p Point) String() string {
 	return fmt.Sprintf("Point(%8.4f,%8.4f)", p.X, p.Y)
 }
 

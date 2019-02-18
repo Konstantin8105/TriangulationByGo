@@ -22,16 +22,19 @@ func createBorderBox() *borderBox {
 }
 
 func (box *borderBox) addPoint(point Point) {
-	box.x_max = math.Max(box.x_max, point.x)
-	box.x_min = math.Min(box.x_min, point.x)
-	box.y_max = math.Max(box.y_max, point.y)
-	box.y_min = math.Min(box.y_min, point.y)
+	box.x_max = math.Max(box.x_max, point.X)
+	box.x_min = math.Min(box.x_min, point.X)
+	box.y_max = math.Max(box.y_max, point.Y)
+	box.y_min = math.Min(box.y_min, point.Y)
 	box.calculateCenter = true
 }
 
 func (box *borderBox) getCenter() *Point {
 	if box.calculateCenter {
-		box.center = createPointByCoordinate((box.x_min+box.x_max)/2.0, (box.y_min+box.y_max)/2.0)
+		box.center = &Point{
+			X: (box.x_min + box.x_max) / 2.0,
+			Y: (box.y_min + box.y_max) / 2.0,
+		}
 		box.calculateCenter = false
 		return box.center
 	}
@@ -39,7 +42,7 @@ func (box *borderBox) getCenter() *Point {
 }
 
 func (box *borderBox) insideBox(point *Point) bool {
-	if point.x < box.x_min || point.x > box.x_max || point.y < box.y_min || point.y > box.y_max {
+	if point.X < box.x_min || point.X > box.x_max || point.Y < box.y_min || point.Y > box.y_max {
 		return false
 	}
 	return true

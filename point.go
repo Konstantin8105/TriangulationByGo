@@ -6,20 +6,16 @@ import (
 )
 
 type Point struct {
-	x, y float64
-}
-
-func createPointByCoordinate(input_x float64, input_y float64) *Point {
-	return &(Point{input_x, input_y})
+	X, Y float64
 }
 
 func (p *Point) String() string {
-	return fmt.Sprintf("Point(%e,%e)", p.x, p.y)
+	return fmt.Sprintf("Point(%e,%e)", p.X, p.Y)
 }
 
 // TODO: use DEEP COMPARE
 func (p *Point) equals(point *Point) bool {
-	if math.Abs(p.x-point.x) > precisionEpsilon() || math.Abs(p.y-point.y) > precisionEpsilon() {
+	if math.Abs(p.X-point.X) > precisionEpsilon() || math.Abs(p.Y-point.Y) > precisionEpsilon() {
 		return false
 	}
 	return true

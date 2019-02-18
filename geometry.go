@@ -11,7 +11,7 @@ const (
 )
 
 func calculateDouble(p1 *Point, p2 *Point, p3 *Point) float64 {
-	return (p2.y-p1.y)*(p3.x-p2.x) - (p3.y-p2.y)*(p2.x-p1.x)
+	return (p2.Y-p1.Y)*(p3.X-p2.X) - (p3.Y-p2.Y)*(p2.X-p1.X)
 }
 
 // if return -1 - result is less 0
@@ -59,14 +59,14 @@ func distanceLineAndPoint(lineP1 *Point, lineP2 *Point, p *Point) float64 {
 		C        float64
 		distance float64
 	)
-	if math.Abs(lineP2.y-lineP1.y) < math.Abs(lineP2.x-lineP1.x) {
-		A = -(lineP2.y - lineP1.y) / (lineP2.x - lineP1.x)
-		C = -lineP1.y - A*lineP1.x
-		distance = math.Abs((A*p.x + B*p.y + C) / math.Sqrt(A*A+B*B))
+	if math.Abs(lineP2.Y-lineP1.Y) < math.Abs(lineP2.X-lineP1.X) {
+		A = -(lineP2.Y - lineP1.Y) / (lineP2.X - lineP1.X)
+		C = -lineP1.Y - A*lineP1.X
+		distance = math.Abs((A*p.X + B*p.Y + C) / math.Sqrt(A*A+B*B))
 	} else {
-		A = -(lineP2.x - lineP1.x) / (lineP2.y - lineP1.y)
-		C = -lineP1.x - A*lineP1.y
-		distance = math.Abs((A*p.y + B*p.x + C) / math.Sqrt(A*A+B*B))
+		A = -(lineP2.X - lineP1.X) / (lineP2.Y - lineP1.Y)
+		C = -lineP1.X - A*lineP1.Y
+		distance = math.Abs((A*p.Y + B*p.X + C) / math.Sqrt(A*A+B*B))
 	}
 	return distance
 }
@@ -79,14 +79,14 @@ func det(a [3][3]float64) float64 {
 
 func isPointInCircle(circlePoints []Point, point *Point) bool {
 	var (
-		x1x float64 = circlePoints[0].x - point.x
-		y1y float64 = circlePoints[0].y - point.y
+		x1x float64 = circlePoints[0].X - point.X
+		y1y float64 = circlePoints[0].Y - point.Y
 
-		x2x float64 = circlePoints[1].x - point.x
-		y2y float64 = circlePoints[1].y - point.y
+		x2x float64 = circlePoints[1].X - point.X
+		y2y float64 = circlePoints[1].Y - point.Y
 
-		x3x float64 = circlePoints[2].x - point.x
-		y3y float64 = circlePoints[2].y - point.y
+		x3x float64 = circlePoints[2].X - point.X
+		y3y float64 = circlePoints[2].Y - point.Y
 	)
 
 	var result float64 = det([3][3]float64{

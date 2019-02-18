@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-
-	"github.com/Konstantin8105/TriangulationByGo/folder1"
 )
 
 func main() {
@@ -31,5 +29,4 @@ func main() {
 	}
 	fmt.Println(box)
 	fmt.Printf("Point:\n%t\n", box.insideBox(point))
-	strange.Show()
 }

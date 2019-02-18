@@ -19,10 +19,10 @@ func calculateDouble(p1 *Point, p2 *Point, p3 *Point) float64 {
 // if return 1 - result is more 0
 func calculateValuePointOnLine(p1 *Point, p2 *Point, p3 *Point) POINT_LINE_STATE {
 	value := calculateDouble(p1, p2, p3)
-	if value > precisionEpsilon() {
+	if value > eps() {
 		return RESULT_IS_MORE_ZERO
 	}
-	if math.Abs(value) > precisionEpsilon() {
+	if math.Abs(value) > eps() {
 		return RESULT_IS_LESS_ZERO
 	}
 	return RESULT_IS_ZERO
@@ -94,7 +94,7 @@ func isPointInCircle(circlePoints []Point, point *Point) bool {
 		{x2x*x2x + y2y*y2y, x2x, y2y},
 		{x3x*x3x + y3y*y3y, x3x, y3y},
 	})
-	return result > precisionEpsilon()
+	return result > eps()
 }
 
 func isPointInRectangle(point *Point, list ...*Point) bool {

@@ -1,5 +1,5 @@
 package tp
 
-func precisionEpsilon() float64 {
+func eps() float64 {
 	return 1e-10
 }

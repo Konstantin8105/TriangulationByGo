@@ -15,7 +15,7 @@ func (p *Point) String() string {
 
 // TODO: use DEEP COMPARE
 func (p *Point) equals(point *Point) bool {
-	if math.Abs(p.X-point.X) > precisionEpsilon() || math.Abs(p.Y-point.Y) > precisionEpsilon() {
+	if math.Abs(p.X-point.X) > eps() || math.Abs(p.Y-point.Y) > eps() {
 		return false
 	}
 	return true

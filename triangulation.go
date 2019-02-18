@@ -1,7 +1,9 @@
 package tp
 
+import "github.com/Konstantin8105/tp/point"
+
 type Triangulation struct {
-	nodes []*Point
+	nodes []*point.Point
 	// flipper       *Flipper
 	// searcher      *Seacher
 	// trianglesList *TriangleList
@@ -14,10 +16,10 @@ const (
 	AMOUNT_SEARCHER_FACTOR                      float64 = 0.5
 )
 
-func (triangulation *Triangulation) getNode(index uint64) *Point {
+func (triangulation *Triangulation) getNode(index uint64) *point.Point {
 	return triangulation.nodes[index]
 }
 
-func Run(points []*Point) bool {
+func Run(points []*point.Point) bool {
 	return false
 }

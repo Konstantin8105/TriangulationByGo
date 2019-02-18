@@ -1,6 +1,11 @@
 package tp
 
-import "math"
+import (
+	"math"
+
+	"github.com/Konstantin8105/tp/bb"
+	"github.com/Konstantin8105/tp/point"
+)
 
 type POINT_LINE_STATE uint8
 
@@ -10,14 +15,11 @@ const (
 	RESULT_IS_MORE_ZERO
 )
 
-func calculateDouble(p1 *Point, p2 *Point, p3 *Point) float64 {
+func calculateDouble(p1, p2, p3 point.Point) float64 {
 	return (p2.Y-p1.Y)*(p3.X-p2.X) - (p3.Y-p2.Y)*(p2.X-p1.X)
 }
 
-// if return -1 - result is less 0
-// if return 0 - result is 0
-// if return 1 - result is more 0
-func calculateValuePointOnLine(p1 *Point, p2 *Point, p3 *Point) POINT_LINE_STATE {
+func calculateValuepointOnLine(p1, p2, p3 point.Point) POINT_LINE_STATE {
 	value := calculateDouble(p1, p2, p3)
 	if value > eps() {
 		return RESULT_IS_MORE_ZERO
@@ -28,15 +30,15 @@ func calculateValuePointOnLine(p1 *Point, p2 *Point, p3 *Point) POINT_LINE_STATE
 	return RESULT_IS_ZERO
 }
 
-func is3pointsCollinear(p1 *Point, p2 *Point, p3 *Point) bool {
+func is3pointsCollinear(p1, p2, p3 point.Point) bool {
 	return calculateValuePointOnLine(p1, p2, p3) == RESULT_IS_ZERO
 }
 
-func isCounterClockwise(a *Point, b *Point, c *Point) bool {
+func isCounterClockwise(a, b, c point.Point) bool {
 	return calculateValuePointOnLine(a, b, c) == RESULT_IS_MORE_ZERO
 }
 
-func isAtRightOf(a *Point, b *Point, c *Point) bool {
+func isAtRightOf(a, b, c point.Point) bool {
 	return isCounterClockwise(a, b, c)
 }
 
@@ -52,7 +54,7 @@ func isAtRightOfByPOINT_LINE_STATE(pol POINT_LINE_STATE) bool {
 	return isCounterClockwiseByPOINT_LINE_STATE(pol)
 }
 
-func distanceLineAndPoint(lineP1 *Point, lineP2 *Point, p *Point) float64 {
+func distanceLineAndPoint(lineP1 point.Point, lineP2 point.Point, p point.Point) float64 {
 	var (
 		A        float64
 		B        float64 = 1
@@ -77,7 +79,7 @@ func det(a [3][3]float64) float64 {
 		a[0][1]*a[1][0]*a[2][2] - a[1][2]*a[2][1]*a[0][0]
 }
 
-func isPointInCircle(circlePoints []Point, point *Point) bool {
+func isPointInCircle(circlePoints []point.Point, point *point.Point) bool {
 	var (
 		x1x float64 = circlePoints[0].X - point.X
 		y1y float64 = circlePoints[0].Y - point.Y
@@ -97,15 +99,15 @@ func isPointInCircle(circlePoints []Point, point *Point) bool {
 	return result > eps()
 }
 
-func isPointInRectangle(point *Point, list ...*Point) bool {
-	borderBox := createBorderBox()
+func isPointInRectangle(p point.Point, list ...point.Point) bool {
+	borderBox := bb.New()
 	for index, p := range list {
-		borderBox.addPoint(*p)
-		if index > 2 && borderBox.insideBox(point) {
+		borderBox.Add(p)
+		if index > 2 && borderBox.Inside(p) {
 			return true
 		}
 	}
-	return borderBox.insideBox(point)
+	return borderBox.Inside(p)
 }
 
 type POINT_TRIANGLE_STATE uint8
@@ -121,12 +123,30 @@ const (
 	POINT_OUTSIDE_LINE_2
 )
 
-func statePointInTriangle(p *Point,
-	trianglePoints [3]*Point,
+func calculateValuePointOnLineD(value float64) POINT_LINE_STATE {
+	if value > eps() {
+		return RESULT_IS_MORE_ZERO
+	}
+	if math.Abs(value) > eps() {
+		return RESULT_IS_LESS_ZERO
+	}
+	return RESULT_IS_ZERO
+}
+
+// if return -1 - result is less 0
+// if return 0 - result is 0
+// if return 1 - result is more 0
+func calculateValuePointOnLine(p1, p2, p3 point.Point) POINT_LINE_STATE {
+	value := calculateDouble(p1, p2, p3)
+	return calculateValuePointOnLineD(value)
+}
+
+func statePointInTriangle(p point.Point,
+	trianglePoints [3]point.Point,
 	values [3]POINT_LINE_STATE) POINT_TRIANGLE_STATE {
 
 	for _, t := range trianglePoints {
-		if p.equals(t) {
+		if p.Equals(t) {
 			return POINT_ON_CORNER
 		}
 	}

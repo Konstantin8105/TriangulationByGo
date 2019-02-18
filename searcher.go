@@ -1,12 +1,6 @@
 package tp
 
-import (
-	"math"
-
-	"github.com/Konstantin8105/tp/bb"
-	"github.com/Konstantin8105/tp/point"
-)
-
+/*
 //TODO нужна структура 1 структура и доипозон высот
 type Seacher struct {
 	beginTriangle []*TriangleStructure
@@ -40,7 +34,7 @@ func CreateSeachers(triangleStructure *TriangleStructure, box *bb.BorderBox, poi
 }
 
 // TODO необходимо добавить где-то обработку если не существует
-func (seacher *Seacher) movingByConvexHull(
+func movingByConvexHull(
 	p point.Point,
 	beginTriangle *TriangleStructure,
 	pointArray []point.Point) POINT_TRIANGLE_STATE {
@@ -89,3 +83,4 @@ func (seacher *Seacher) movingByConvexHull(
 	}
 	return statePointInTriangle(p, trianglePoints, value)
 }
+*/

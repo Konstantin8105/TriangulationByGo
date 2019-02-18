@@ -1,6 +1,11 @@
 package tp
 
-import "container/list"
+import (
+	"container/list"
+	"fmt"
+
+	"github.com/Konstantin8105/tp/point"
+)
 
 // main data structure for triangulation
 //
@@ -22,10 +27,13 @@ func (d *data) changeClockwise() {
 
 type Triangulation struct {
 	ps []point.Point
+	ds *list.List
+
+	// last used triangle
+	last *data
 }
 
-func (tr *Triangulation) New(ps ...point.Point) {
-	tr.ps = ps
+func (tr *Triangulation) New(ps ...point.Point) error {
 
 	// find border box
 	b := bb.New()
@@ -33,19 +41,20 @@ func (tr *Triangulation) New(ps ...point.Point) {
 		b.Add(ps[i])
 	}
 
+	//
 	// create pseudo-box.
 	// all points must be inside pseudo-box
 	//
 	//	P1     P2
-	//	o-------o
+	//	o---1---o
 	//	|      /|
-	//	|     / |
+	//	|  0  / |
 	//	|    /  |
-	//	|   /   |
+	//	0   2   3
 	//	|  /    |
-	//	| /     |
+	//	| /  1  |
 	//  |/      |
-	//  o-------o
+	//  o---4---o
 	//	P0     P3
 	//
 	pps := []point.Point{ // pseudo-box points
@@ -59,154 +68,93 @@ func (tr *Triangulation) New(ps ...point.Point) {
 			tr.remove(pps[i])
 		}
 	}()
+	tr.ps = append(pps, ps...)
 
-	// flipper = new FliperDelaunay(this);
-	// List<Point>[] pointArray = convexHullDouble(input);
-	// if (pointArray == null)
-	// return;
-	// List<Point> convexPoints = pointArray[0];
-	// BorderBox box = createConvexHullTriangles(convexPoints);
-	// searcher = new FastSearcher(this, triangleList.getFirstNotNullableElement(), box, pointArray[1].size());
 	//
-	// if (pointArray[1].size() >= MINIMAL_POINTS_FOR_CLEANING) {
-	// int amount = (int) (AMOUNT_CLEANING_FACTOR_TRIANGLE_STRUCTURE * pointArray[1].size());
-	// amount = amount < 1 ? 1 : amount;
-	// triangleList.setMaxAmountNullableElements(amount);
-	// }
-	// for (int i = 0; i < pointArray[1].size(); i++) {
-	// addNextPoint(pointArray[1].get(i));
-	// flipper.run();
-	//            if (i % 1000 == 0)
-	//                System.err.println(i);
-	// }
-	// flipper.run();
+	// create points, ribs, triangles pseudo-box
+	//
+	t0 := data{
+		nodes: [3]int{0, 1, 2},
+		ribs:  [3]int{0, 1, 2},
+	}
+	t1 := data{
+		nodes: [3]int{2, 3, 0},
+		ribs:  [3]int{3, 4, 2},
+	}
+	t0.data[2] = &t1
+	t1.data[2] = &t0
+	tr.ds.PushFront(&t0)
+	tr.ds.PushFront(&t1)
 
+	//
+	// add points in triangles
+	//
+	tr.last = &t0
+	for i := 5; i < len(tr.ps); i++ {
+		if err := tr.add(tr.ps[i]); err != nil {
+			return err
+		}
+	}
 }
 
-/*
-    //Performance O(n*log(n)) in worst case
-    // Point[0][] - convex points
-    // Point[1][] - sorted list of all points
-    private static List[] convexHullDouble(Point[] inputPoints) {
-        if (inputPoints.length < 2) {
-            return null;
-        }
-
-        ArrayList<Point> array = new ArrayList<>(Arrays.asList(inputPoints));
-
-        Collections.sort(array, new Comparator<Point>() {
-            @Override
-            public int compare(Point first, Point second) {
-                if ((first).getX() == (second).getX()) {
-                    if ((first).getY() > (second).getY())
-                        return 1;
-                    if ((first).getY() < (second).getY())
-                        return -1;
-                    return 0;
-                }
-                if ((first).getX() > (second).getX())
-                    return 1;
-                if ((first).getX() < (second).getX())
-                    return -1;
-                return 0;
-            }
-        });
-
-        List<Integer> removedIndex = new ArrayList<>();
-        for (int i = 1; i < array.size(); i++) {
-            if (array.get(i - 1).equals(array.get(i))) {
-                removedIndex.add(i);
-            }
-        }
-        for (int i = removedIndex.size() - 1; i >= 0; i--) {
-            int position = removedIndex.get(i);
-            array.remove(position);
-        }
-
-        int n = array.size();
-        Point[] P = new Point[n];
-        for (int i = 0; i < n; i++) {
-            P[i] = array.get(i);
-        }
-
-        Point[] H = new Point[2 * n];
-//            List<Point> H = new ArrayList<>(2 * n);
-
-        int k = 0;
-//             Build lower hull
-        for (int i = 0; i < n; ++i) {
-            while (k >= 2 && Geometry.isCounterClockwise(H[k - 2], H[k - 1], P[i])) {
-                k--;
-            }
-            H[k++] = P[i];
-        }
-
-        // Build upper hull
-        for (int i = n - 2, t = k + 1; i >= 0; i--) {
-            while (k >= t && Geometry.isCounterClockwise(H[k - 2], H[k - 1], P[i])) {
-                k--;
-            }
-            H[k++] = P[i];
-        }
-        List<Point> convexPoints = new ArrayList<>();
-        if (k > 1) {
-            H = Arrays.copyOfRange(H, 0, k - 1); // remove non-hull vertices after k; remove k - 1 which is a duplicate
-            boolean[] removed = new boolean[k - 1];
-            for (int position0 = 0; position0 < removed.length; position0++) {
-                int position1 = position0 + 1 >= removed.length ? position0 + 1 - removed.length : position0 + 1;
-                int position2 = position0 + 2 >= removed.length ? position0 + 2 - removed.length : position0 + 2;
-                if (Geometry.is3pointsCollinear(
-                        H[position0],
-                        H[position1],
-                        H[position2])) {
-                    removed[position1] = true;
-                }
-            }
-            for (int i = 0; i < removed.length; i++) {
-                if (!removed[i])
-                    convexPoints.add(H[i]);
-            }
-            if (array.size() > 5) {
-                if ((double) convexPoints.size() / (double) array.size() > RATIO_DELETING_CONVEX_POINT_FROM_POINT_LIST) {
-                    boolean[] delete = new boolean[array.size()];
-                    int position = 0;
-                    for (int i = 0; i < array.size(); i++) {
-                        if (array.get(i).equals(convexPoints.get(position))) {
-                            delete[i] = true;
-                            position++;
-                        }
-                    }
-                    for (int i = array.size() - 1; i >= 0; i--) {
-                        if (position >= convexPoints.size())
-                            break;
-                        if (array.get(i).equals(convexPoints.get(position))) {
-                            delete[i] = true;
-                            position++;
-                        }
-                    }
-                    ArrayList<Point> newList = new ArrayList<>();
-                    for (int i = 0; i < array.size(); i++) {
-                        if (!delete[i])
-                            newList.add(array.get(i));
-                    }
-                    array = newList;
-                }
-            }
-        }
-
-        return new List[]{convexPoints, array};
-    }
-
-
-*/
-
-type grid = *list.List
-
-func (g *grid) add(ds ...data) {
-	if g == nil {
-		g = list.New()
+func (tr *Triangulation) add(next int) error {
+	searcher(next)
+	state := movingByConvexHull(next)
+	err := fmt.Errorf("Strange point #%d : %s", next, tr.ps[next])
+	switch state {
+	case pointInside:
+		err = addNextPointInTriangle(nextPoint)
+	case pointOnLine0:
+		err = addNextPointOnLine(nextPoint, 0)
+	case pointOnLine1:
+		err = addNextPointOnLine(nextPoint, 1)
+	case pointOnLine2:
+		err = addNextPointOnLine(nextPoint, 2)
+	case pointOnCorner:
+		err = nil
 	}
-	for i := range ds {
-		g.PushFront(ds[i])
+	return
+}
+
+func (tr *Triangulation) movingByConvexHull(Point point) state {
+	beginTriangle := tr.last
+	for {
+		//add reserve searching
+		value[0] = calculateValuePointOnLine(getNode(beginTriangle.iNodes[0]), getNode(beginTriangle.iNodes[1]), point)
+		if Geometry.isAtRightOf(value[0]) {
+			beginTriangle = beginTriangle.triangles[0]
+		} else {
+			whichOp := 0
+			value[1] = calculateValuePointOnLine(getNode(beginTriangle.iNodes[1]), getNode(beginTriangle.iNodes[2]), point)
+			if Geometry.isAtRightOf(value[1]) {
+				whichOp += 1
+			}
+			value[2] = calculateValuePointOnLine(getNode(beginTriangle.iNodes[2]), getNode(beginTriangle.iNodes[0]), point)
+			if Geometry.isAtRightOf(value[2]) {
+				whichOp += 2
+			}
+
+			switch whichOp {
+			case 0:
+			case 1:
+				beginTriangle = beginTriangle.triangles[1]
+			case 2:
+				beginTriangle = beginTriangle.triangles[2]
+			default:
+				if distanceLineAndPoint(getNode(beginTriangle.iNodes[1]), getNode(beginTriangle.iNodes[2]), point) >
+					distanceLineAndPoint(getNode(beginTriangle.iNodes[2]), getNode(beginTriangle.iNodes[0]), point) {
+					beginTriangle = beginTriangle.triangles[1]
+				} else {
+					beginTriangle = beginTriangle.triangles[2]
+				}
+			}
+		}
 	}
+	trianglePoint = []point.Point{
+		getNode(beginTriangle.iNodes[0]),
+		getNode(beginTriangle.iNodes[1]),
+		getNode(beginTriangle.iNodes[2]),
+	}
+	setSearcher(beginTriangle)
+	return statePointInTriangle(point, trianglePoint, value)
 }

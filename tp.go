@@ -4,6 +4,7 @@ import (
 	"container/list"
 	"fmt"
 
+	"github.com/Konstantin8105/tp/bb"
 	"github.com/Konstantin8105/tp/point"
 )
 
@@ -58,10 +59,10 @@ func (tr *Triangulation) New(ps ...point.Point) error {
 	//	P0     P3
 	//
 	pps := []point.Point{ // pseudo-box points
-		point.Point{X: bb.Xmin - 1.0, Y: bb.Ymin - 1.0}, // P0
-		point.Point{X: bb.Xmin - 1.0, Y: bb.Ymax + 1.0}, // P1
-		point.Point{X: bb.Xmax + 1.0, Y: bb.Ymax + 1.0}, // P2
-		point.Point{X: bb.Xmax + 1.0, Y: bb.Ymin - 1.0}, // P3
+		point.Point{X: b.Xmin - 1.0, Y: b.Ymin - 1.0}, // P0
+		point.Point{X: b.Xmin - 1.0, Y: b.Ymax + 1.0}, // P1
+		point.Point{X: b.Xmax + 1.0, Y: b.Ymax + 1.0}, // P2
+		point.Point{X: b.Xmax + 1.0, Y: b.Ymin - 1.0}, // P3
 	}
 	defer func() {
 		for i := range pps {
@@ -81,8 +82,8 @@ func (tr *Triangulation) New(ps ...point.Point) error {
 		nodes: [3]int{2, 3, 0},
 		ribs:  [3]int{3, 4, 2},
 	}
-	t0.data[2] = &t1
-	t1.data[2] = &t0
+	t0.triangles[2] = &t1
+	t1.triangles[2] = &t0
 	tr.ds.PushFront(&t0)
 	tr.ds.PushFront(&t1)
 
@@ -91,10 +92,15 @@ func (tr *Triangulation) New(ps ...point.Point) error {
 	//
 	tr.last = &t0
 	for i := 5; i < len(tr.ps); i++ {
-		if err := tr.add(tr.ps[i]); err != nil {
+		if err := tr.add(i); err != nil {
 			return err
 		}
 	}
+	return nil
+}
+
+func (tr *Triangulation) remove(p point.Point) error {
+	panic("remove")
 }
 
 func (tr *Triangulation) add(next int) error {
@@ -117,6 +123,7 @@ func (tr *Triangulation) add(next int) error {
 }
 
 func (tr *Triangulation) movingByConvexHull(Point point) state {
+	value := [3]POINT_LINE_STATE{}
 	beginTriangle := tr.last
 	for {
 		//add reserve searching

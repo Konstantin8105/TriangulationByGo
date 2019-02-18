@@ -93,7 +93,7 @@ const (
 )
 
 func isNear(p1, p2 point.Point) bool {
-	return math.Hypot(p1.X-p2.X, p1.Y-p2.Y) < 1e-10
+	return math.Hypot(p1.X-p2.X, p1.Y-p2.Y) < eps()
 }
 
 func (tr *Triangulation) statePointInTriangle(ip int, tris [3]int) pointTriangleState {

@@ -117,12 +117,8 @@ func (tr *Triangulation) add(next int) (err error) {
 	switch state {
 	case pointInside:
 		err = tr.addInTriangle(tri, next)
-	case pointOnLine0:
-		err = tr.addOnLine(tri, next, 0)
-	case pointOnLine1:
-		err = tr.addOnLine(tri, next, 1)
-	case pointOnLine2:
-		err = tr.addOnLine(tri, next, 2)
+	case pointOnLine0, pointOnLine1, pointOnLine2:
+		err = tr.addOnLine(tri, next, state)
 	case pointOnCorner:
 		err = nil
 	}
@@ -151,7 +147,7 @@ func (tr *Triangulation) findTriangle(next int) (state pointTriangleState, tri *
 	return
 }
 
-func (tr *Triangulation) addOnLine(tri *data, next int, pos int) (err error) {
+func (tr *Triangulation) addOnLine(tri *data, next int, state pointTriangleState) (err error) {
 	return fmt.Errorf("add implementation for addOnLine")
 }
 

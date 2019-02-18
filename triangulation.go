@@ -1,4 +1,4 @@
-package main
+package tp
 
 type Triangulation struct {
 	nodes []*Point

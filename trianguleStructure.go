@@ -1,4 +1,4 @@
-package main
+package tp
 
 // Structure of triangles
 type TriangleStructure struct {

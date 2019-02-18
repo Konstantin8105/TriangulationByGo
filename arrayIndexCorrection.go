@@ -1,4 +1,4 @@
-package main
+package tp
 
 // Convert index to diaposone [0...size)
 func normalizeBySize(index uint8, size uint8) uint8 {

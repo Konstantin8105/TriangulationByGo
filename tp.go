@@ -29,9 +29,6 @@ func (d *data) changeClockwise() {
 type Triangulation struct {
 	ps []point.Point
 	ds *list.List
-
-	// last used triangle
-	last *data
 }
 
 func (tr *Triangulation) New(ps ...point.Point) error {
@@ -90,7 +87,6 @@ func (tr *Triangulation) New(ps ...point.Point) error {
 	//
 	// add points in triangles
 	//
-	tr.last = &t0
 	for i := 5; i < len(tr.ps); i++ {
 		if err := tr.add(i); err != nil {
 			return err
@@ -103,65 +99,51 @@ func (tr *Triangulation) remove(p point.Point) error {
 	panic("remove")
 }
 
-func (tr *Triangulation) add(next int) error {
-	searcher(next)
-	state := movingByConvexHull(next)
-	err := fmt.Errorf("Strange point #%d : %s", next, tr.ps[next])
+func (tr *Triangulation) add(next int) (err error) {
+	state, tri := tr.findTriangle(next)
+	err = fmt.Errorf("Strange point #%d with state `%v` : %s", next, state, tr.ps[next])
 	switch state {
 	case pointInside:
-		err = addNextPointInTriangle(nextPoint)
+		err = tr.addInTriangle(tri, next)
 	case pointOnLine0:
-		err = addNextPointOnLine(nextPoint, 0)
+		err = tr.addOnLine(tri, next, 0)
 	case pointOnLine1:
-		err = addNextPointOnLine(nextPoint, 1)
+		err = tr.addOnLine(tri, next, 1)
 	case pointOnLine2:
-		err = addNextPointOnLine(nextPoint, 2)
+		err = tr.addOnLine(tri, next, 2)
 	case pointOnCorner:
 		err = nil
 	}
 	return
 }
 
-func (tr *Triangulation) movingByConvexHull(Point point) state {
-	value := [3]POINT_LINE_STATE{}
-	beginTriangle := tr.last
-	for {
-		//add reserve searching
-		value[0] = calculateValuePointOnLine(getNode(beginTriangle.iNodes[0]), getNode(beginTriangle.iNodes[1]), point)
-		if Geometry.isAtRightOf(value[0]) {
-			beginTriangle = beginTriangle.triangles[0]
-		} else {
-			whichOp := 0
-			value[1] = calculateValuePointOnLine(getNode(beginTriangle.iNodes[1]), getNode(beginTriangle.iNodes[2]), point)
-			if Geometry.isAtRightOf(value[1]) {
-				whichOp += 1
-			}
-			value[2] = calculateValuePointOnLine(getNode(beginTriangle.iNodes[2]), getNode(beginTriangle.iNodes[0]), point)
-			if Geometry.isAtRightOf(value[2]) {
-				whichOp += 2
-			}
-
-			switch whichOp {
-			case 0:
-			case 1:
-				beginTriangle = beginTriangle.triangles[1]
-			case 2:
-				beginTriangle = beginTriangle.triangles[2]
-			default:
-				if distanceLineAndPoint(getNode(beginTriangle.iNodes[1]), getNode(beginTriangle.iNodes[2]), point) >
-					distanceLineAndPoint(getNode(beginTriangle.iNodes[2]), getNode(beginTriangle.iNodes[0]), point) {
-					beginTriangle = beginTriangle.triangles[1]
-				} else {
-					beginTriangle = beginTriangle.triangles[2]
-				}
-			}
+func (tr *Triangulation) findTriangle(next int) (state pointTriangleState, tri *data) {
+	var found bool
+	for e := tr.ds.Front(); e != nil; e = e.Next() {
+		// moving triangle by triangles
+		state = tr.statePointInTriangle(next, tri.nodes)
+		switch state {
+		case pointOutsideLine0, pointOutsideLine1, pointOutsideLine2:
+			found = false
+		default:
+			found = true
+		}
+		if found {
+			break
 		}
 	}
-	trianglePoint = []point.Point{
-		getNode(beginTriangle.iNodes[0]),
-		getNode(beginTriangle.iNodes[1]),
-		getNode(beginTriangle.iNodes[2]),
+	if !found {
+		state = pointOutside
 	}
-	setSearcher(beginTriangle)
-	return statePointInTriangle(point, trianglePoint, value)
+	return
+}
+
+func (tr *Triangulation) addOnLine(tri *data, next int, pos int) (err error) {
+	// TODO
+	return
+}
+
+func (tr *Triangulation) addInTriangle(tri *data, next int) (err error) {
+	// TODO
+	return
 }

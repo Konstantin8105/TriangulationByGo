@@ -3,7 +3,6 @@ package tp
 import (
 	"math"
 
-	"github.com/Konstantin8105/tp/bb"
 	"github.com/Konstantin8105/tp/point"
 )
 
@@ -32,30 +31,6 @@ func calculateValuepointOnLine(p1, p2, p3 point.Point) POINT_LINE_STATE {
 		return RESULT_IS_LESS_ZERO
 	}
 	return RESULT_IS_ZERO
-}
-
-func is3pointsCollinear(p1, p2, p3 point.Point) bool {
-	return calculateValuePointOnLine(p1, p2, p3) == RESULT_IS_ZERO
-}
-
-func isCounterClockwise(a, b, c point.Point) bool {
-	return calculateValuePointOnLine(a, b, c) == RESULT_IS_MORE_ZERO
-}
-
-func isAtRightOf(a, b, c point.Point) bool {
-	return isCounterClockwise(a, b, c)
-}
-
-func is3pointsCollinearByPOINT_LINE_STATE(pol POINT_LINE_STATE) bool {
-	return pol == RESULT_IS_ZERO
-}
-
-func isCounterClockwiseByPOINT_LINE_STATE(pol POINT_LINE_STATE) bool {
-	return pol == RESULT_IS_MORE_ZERO
-}
-
-func isAtRightOfByPOINT_LINE_STATE(pol POINT_LINE_STATE) bool {
-	return isCounterClockwiseByPOINT_LINE_STATE(pol)
 }
 
 func distanceLineAndPoint(lineP1 point.Point, lineP2 point.Point, p point.Point) float64 {
@@ -103,84 +78,88 @@ func isPointInCircle(circlePoints []point.Point, point *point.Point) bool {
 	return result > eps()
 }
 
-func isPointInRectangle(p point.Point, list ...point.Point) bool {
-	borderBox := bb.New()
-	for index, p := range list {
-		borderBox.Add(p)
-		if index > 2 && borderBox.Inside(p) {
-			return true
-		}
-	}
-	return borderBox.Inside(p)
-}
+// func isPointInRectangle(p point.Point, list ...point.Point) bool {
+// borderBox := bb.New()
+// for index, p := range list {
+// borderBox.Add(p)
+// if index > 2 && borderBox.Inside(p) {
+// return true
+// }
+// }
+// return borderBox.Inside(p)
+// }
 
-type POINT_TRIANGLE_STATE uint8
+// func calculateValuePointOnLineD(value float64) pointLineState {
+// if value > eps() {
+// return RESULT_IS_MORE_ZERO
+// }
+// if math.Abs(value) > eps() {
+// return RESULT_IS_LESS_ZERO
+// }
+// return RESULT_IS_ZERO
+// }
+
+type pointTriangleState uint8
 
 const (
-	POINT_LINE_STATE_0 POINT_TRIANGLE_STATE = iota
-	POINT_LINE_STATE_1
-	POINT_LINE_STATE_2
-	POINT_ON_CORNER
-	POINT_INSIDE
-	POINT_OUTSIDE_LINE_0
-	POINT_OUTSIDE_LINE_1
-	POINT_OUTSIDE_LINE_2
+	pointOnLine0 pointTriangleState = iota
+	pointOnLine1
+	pointOnLine2
+	pointOnCorner
+	pointInside
+	pointOutside
+	pointOutsideLine0
+	pointOutsideLine1
+	pointOutsideLine2
 )
 
-func calculateValuePointOnLineD(value float64) POINT_LINE_STATE {
-	if value > eps() {
-		return RESULT_IS_MORE_ZERO
-	}
-	if math.Abs(value) > eps() {
-		return RESULT_IS_LESS_ZERO
-	}
-	return RESULT_IS_ZERO
+func isNear(p1, p2 point.Point) bool {
+	return math.Hypot(p1.X-p2.X, p1.Y-p2.Y) < 1e-10
 }
 
-// if return -1 - result is less 0
-// if return 0 - result is 0
-// if return 1 - result is more 0
-func calculateValuePointOnLine(p1, p2, p3 point.Point) POINT_LINE_STATE {
-	value := calculateDouble(p1, p2, p3)
-	return calculateValuePointOnLineD(value)
-}
-
-func statePointInTriangle(p point.Point,
-	trianglePoints [3]point.Point,
-	values [3]POINT_LINE_STATE) POINT_TRIANGLE_STATE {
-
-	for _, t := range trianglePoints {
-		if p.Equals(t) {
-			return POINT_ON_CORNER
+func (tr *Triangulation) statePointInTriangle(ip int, tris [3]int) pointTriangleState {
+	for i := range tris {
+		if isNear(tr.ps[ip], tr.ps[tris[i]]) {
+			return pointOnCorner
 		}
 	}
 
-	if isPointInRectangle(p, trianglePoints[0], trianglePoints[1]) {
-		if is3pointsCollinearByPOINT_LINE_STATE(values[0]) {
-			return POINT_LINE_STATE_0
-		}
-	}
-	if isAtRightOfByPOINT_LINE_STATE(values[0]) {
-		return POINT_OUTSIDE_LINE_0
-	}
-
-	if isPointInRectangle(p, trianglePoints[1], trianglePoints[2]) {
-		if is3pointsCollinearByPOINT_LINE_STATE(values[1]) {
-			return POINT_LINE_STATE_1
-		}
-	}
-	if isAtRightOfByPOINT_LINE_STATE(values[1]) {
-		return POINT_OUTSIDE_LINE_1
-	}
-
-	if isPointInRectangle(p, trianglePoints[2], trianglePoints[0]) {
-		if is3pointsCollinearByPOINT_LINE_STATE(values[2]) {
-			return POINT_LINE_STATE_2
-		}
-	}
-	if isAtRightOfByPOINT_LINE_STATE(values[2]) {
-		return POINT_OUTSIDE_LINE_2
+	ts := []struct {
+		trisBegin, trisEnd  int
+		onLine, outsideLine pointTriangleState
+	}{
+		{
+			trisBegin:   tris[0],
+			trisEnd:     tris[1],
+			onLine:      pointOnLine0,
+			outsideLine: pointOutsideLine0,
+		},
+		{
+			trisBegin:   tris[1],
+			trisEnd:     tris[2],
+			onLine:      pointOnLine1,
+			outsideLine: pointOutsideLine1,
+		},
+		{
+			trisBegin:   tris[2],
+			trisEnd:     tris[0],
+			onLine:      pointOnLine2,
+			outsideLine: pointOutsideLine2,
+		},
 	}
 
-	return POINT_INSIDE
+	for i := range ts {
+		switch calculateValuepointOnLine(
+			tr.ps[ip],
+			tr.ps[ts[i].trisBegin],
+			tr.ps[ts[i].trisEnd],
+		) {
+		case RESULT_IS_ZERO:
+			return ts[i].onLine
+		case RESULT_IS_MORE_ZERO:
+			return ts[i].outsideLine
+		}
+	}
+
+	return pointInside
 }

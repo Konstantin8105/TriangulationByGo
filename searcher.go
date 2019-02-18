@@ -8,7 +8,7 @@ type Seacher struct {
 	pointArray    []*Point
 }
 
-func CreateSeachers(triangleStructure *TriangleStructure, box *BorderBox, pointArray []*Point) *Seacher {
+func CreateSeachers(triangleStructure *TriangleStructure, box *borderBox, pointArray []*Point) *Seacher {
 	maxSize := AMOUNT_SEARCHER_FACTOR
 	maxSize *= math.Sqrt(float64(len(pointArray)))
 	var amount uint64

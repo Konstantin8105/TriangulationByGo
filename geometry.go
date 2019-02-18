@@ -72,7 +72,9 @@ func distanceLineAndPoint(lineP1 *Point, lineP2 *Point, p *Point) float64 {
 }
 
 func det(a [3][3]float64) float64 {
-	return a[0][0]*a[1][1]*a[2][2] + a[1][0]*a[2][1]*a[0][2] + a[0][1]*a[1][2]*a[2][0] - a[0][2]*a[1][1]*a[2][0] - a[0][1]*a[1][0]*a[2][2] - a[1][2]*a[2][1]*a[0][0]
+	return a[0][0]*a[1][1]*a[2][2] + a[1][0]*a[2][1]*a[0][2] +
+		a[0][1]*a[1][2]*a[2][0] - a[0][2]*a[1][1]*a[2][0] -
+		a[0][1]*a[1][0]*a[2][2] - a[1][2]*a[2][1]*a[0][0]
 }
 
 func isPointInCircle(circlePoints []Point, point *Point) bool {
@@ -119,7 +121,10 @@ const (
 	POINT_OUTSIDE_LINE_2
 )
 
-func statePointInTriangle(p *Point, trianglePoints [3]*Point, values [3]POINT_LINE_STATE) POINT_TRIANGLE_STATE {
+func statePointInTriangle(p *Point,
+	trianglePoints [3]*Point,
+	values [3]POINT_LINE_STATE) POINT_TRIANGLE_STATE {
+
 	for _, t := range trianglePoints {
 		if p.equals(t) {
 			return POINT_ON_CORNER

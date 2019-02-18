@@ -2,30 +2,32 @@ package tp
 
 import (
 	"fmt"
+
+	"github.com/Konstantin8105/tp"
 )
 
 func main() {
 	fmt.Println("Hello World")
-	point := createPointByCoordinate(-1.0, -1.0)
+	point := tp.Point{-1.0, -1.0}
 	fmt.Println(point)
-	coordinates := []*Point{
-		createPointByCoordinate(0.0, 0.0),
-		createPointByCoordinate(100.0, 100.0),
-		createPointByCoordinate(200.0, 200.0),
-		createPointByCoordinate(300.0, 300.0),
-		createPointByCoordinate(400.0, 400.0),
-		createPointByCoordinate(500.0, 500.0),
-		createPointByCoordinate(100.0, 0.0),
+	coordinates := []tp.Point{
+		tp.Point{X: 0.0, Y: 0.0},
+		tp.Point{X: 100.0, Y: 100.0},
+		tp.Point{X: 200.0, Y: 200.0},
+		tp.Point{X: 300.0, Y: 300.0},
+		tp.Point{X: 400.0, Y: 400.0},
+		tp.Point{X: 500.0, Y: 500.0},
+		tp.Point{X: 100.0, Y: 0.0},
 	}
-	triangulation := createTriangulation(coordinates)
-
-	fmt.Println("Trinaguation result:")
-	fmt.Printf("%t\n", triangulation)
+	// triangulation := tp.Run(coordinates)
+	//
+	// fmt.Println("Trinaguation result:")
+	// fmt.Printf("%t\n", triangulation)
 
 	fmt.Println("BorderBox result:")
-	box := createBorderBox()
+	box := tp.CreateBorderBox()
 	for _, p := range coordinates {
-		box.addPoint(*p)
+		box.AddPoint(*p)
 	}
 	fmt.Println(box)
 	fmt.Printf("Point:\n%t\n", box.insideBox(point))

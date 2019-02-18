@@ -18,6 +18,6 @@ func (triangulation *Triangulation) getNode(index uint64) *Point {
 	return triangulation.nodes[index]
 }
 
-func createTriangulation(points []*Point) bool {
+func Run(points []*Point) bool {
 	return false
 }

@@ -9,8 +9,8 @@ import (
 
 // BorderBox is struct of bordex box.
 type BorderBox struct {
-	x_min, x_max float64
-	y_min, y_max float64
+	Xmin, Xmax   float64
+	Ymin, Ymax   float64
 	updateCenter bool
 	center       point.Point
 }
@@ -18,19 +18,19 @@ type BorderBox struct {
 // New return prepared border box.
 func New() *BorderBox {
 	p := new(BorderBox)
-	p.x_min = +math.MaxFloat64
-	p.x_max = -math.MaxFloat64
-	p.y_min = +math.MaxFloat64
-	p.y_max = -math.MaxFloat64
+	p.Xmin = +math.MaxFloat64
+	p.Xmax = -math.MaxFloat64
+	p.Ymin = +math.MaxFloat64
+	p.Ymax = -math.MaxFloat64
 	return p
 }
 
 // Add update border of border box.
 func (box *BorderBox) Add(p point.Point) {
-	box.x_max = math.Max(box.x_max, p.X)
-	box.x_min = math.Min(box.x_min, p.X)
-	box.y_max = math.Max(box.y_max, p.Y)
-	box.y_min = math.Min(box.y_min, p.Y)
+	box.Xmax = math.Max(box.Xmax, p.X)
+	box.Xmin = math.Min(box.Xmin, p.X)
+	box.Ymax = math.Max(box.Ymax, p.Y)
+	box.Ymin = math.Min(box.Ymin, p.Y)
 	box.updateCenter = true
 }
 
@@ -38,8 +38,8 @@ func (box *BorderBox) Add(p point.Point) {
 func (box *BorderBox) Center() point.Point {
 	if box.updateCenter {
 		box.center = point.Point{
-			X: (box.x_min + box.x_max) / 2.0,
-			Y: (box.y_min + box.y_max) / 2.0,
+			X: (box.Xmin + box.Xmax) / 2.0,
+			Y: (box.Ymin + box.Ymax) / 2.0,
 		}
 		box.updateCenter = false
 		return box.center
@@ -50,10 +50,10 @@ func (box *BorderBox) Center() point.Point {
 // Inside return true if point `p` is inside border box, but not on border.
 // Or another case return false.
 func (box *BorderBox) Inside(p point.Point) bool {
-	if p.X < box.x_min ||
-		p.X > box.x_max ||
-		p.Y < box.y_min ||
-		p.Y > box.y_max {
+	if p.X < box.Xmin ||
+		p.X > box.Xmax ||
+		p.Y < box.Ymin ||
+		p.Y > box.Ymax {
 		return false
 	}
 	return true
@@ -62,8 +62,8 @@ func (box *BorderBox) Inside(p point.Point) bool {
 // String return string with border box coordinates
 func (box *BorderBox) String() string {
 	return fmt.Sprintf("BorderBox\nx={%8.4f,%8.4f}\ny={%8.4f,%8.4f}",
-		box.x_min,
-		box.x_max,
-		box.y_min,
-		box.y_max)
+		box.Xmin,
+		box.Xmax,
+		box.Ymin,
+		box.Ymax)
 }

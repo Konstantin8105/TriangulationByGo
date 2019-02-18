@@ -7,6 +7,10 @@ import (
 	"github.com/Konstantin8105/tp/point"
 )
 
+func eps() float64 {
+	return 1e-10
+}
+
 type POINT_LINE_STATE uint8
 
 const (

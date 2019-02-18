@@ -2,7 +2,6 @@ package point
 
 import (
 	"fmt"
-	"math"
 )
 
 // Point store coordinates of point

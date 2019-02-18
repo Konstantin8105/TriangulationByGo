@@ -78,27 +78,6 @@ func isPointInCircle(circlePoints []point.Point, point *point.Point) bool {
 	return result > eps()
 }
 
-// func isPointInRectangle(p point.Point, list ...point.Point) bool {
-// borderBox := bb.New()
-// for index, p := range list {
-// borderBox.Add(p)
-// if index > 2 && borderBox.Inside(p) {
-// return true
-// }
-// }
-// return borderBox.Inside(p)
-// }
-
-// func calculateValuePointOnLineD(value float64) pointLineState {
-// if value > eps() {
-// return RESULT_IS_MORE_ZERO
-// }
-// if math.Abs(value) > eps() {
-// return RESULT_IS_LESS_ZERO
-// }
-// return RESULT_IS_ZERO
-// }
-
 type pointTriangleState uint8
 
 const (

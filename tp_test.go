@@ -1,19 +1,16 @@
-package tp_test
+package tp
 
 import (
 	"fmt"
 	"testing"
-
-	"github.com/Konstantin8105/tp"
-	"github.com/Konstantin8105/tp/point"
 )
 
-func Test(t *testing.T) {
+func TestTp(t *testing.T) {
 	tcs := []struct {
-		ps []point.Point
+		ps []Point
 	}{
 		{
-			ps: []point.Point{
+			ps: []Point{
 				{X: 0.0, Y: 0.0},
 				{X: 1.0, Y: 1.0},
 				{X: 1.0, Y: 0.0},
@@ -23,7 +20,7 @@ func Test(t *testing.T) {
 
 	for i := range tcs {
 		t.Run(fmt.Sprintf("%d", i), func(t *testing.T) {
-			tris, err := tp.New(tcs[i].ps...)
+			tris, err := NewTp(tcs[i].ps...)
 			if err != nil {
 				t.Error(err)
 			}

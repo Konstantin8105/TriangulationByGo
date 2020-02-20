@@ -1,4 +1,4 @@
-package point
+package tp
 
 import (
 	"fmt"
@@ -21,8 +21,4 @@ func (p Point) Equals(point Point) bool {
 		return false
 	}
 	return true
-}
-
-func eps() float64 {
-	return 1e-10
 }

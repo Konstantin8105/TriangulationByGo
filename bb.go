@@ -1,10 +1,8 @@
-package bb
+package tp
 
 import (
 	"fmt"
 	"math"
-
-	"github.com/Konstantin8105/tp/point"
 )
 
 // BorderBox is struct of bordex box.
@@ -12,11 +10,11 @@ type BorderBox struct {
 	Xmin, Xmax   float64
 	Ymin, Ymax   float64
 	updateCenter bool
-	center       point.Point
+	center       Point
 }
 
 // New return prepared border box.
-func New() *BorderBox {
+func NewBB() *BorderBox {
 	p := new(BorderBox)
 	p.Xmin = +math.MaxFloat64
 	p.Xmax = -math.MaxFloat64
@@ -26,7 +24,7 @@ func New() *BorderBox {
 }
 
 // Add update border of border box.
-func (box *BorderBox) Add(p point.Point) {
+func (box *BorderBox) Add(p Point) {
 	box.Xmax = math.Max(box.Xmax, p.X)
 	box.Xmin = math.Min(box.Xmin, p.X)
 	box.Ymax = math.Max(box.Ymax, p.Y)
@@ -34,10 +32,10 @@ func (box *BorderBox) Add(p point.Point) {
 	box.updateCenter = true
 }
 
-// Center return coordinate of center point.
-func (box *BorderBox) Center() point.Point {
+// Center return coordinate of center
+func (box *BorderBox) Center() Point {
 	if box.updateCenter {
-		box.center = point.Point{
+		box.center = Point{
 			X: (box.Xmin + box.Xmax) / 2.0,
 			Y: (box.Ymin + box.Ymax) / 2.0,
 		}
@@ -49,7 +47,7 @@ func (box *BorderBox) Center() point.Point {
 
 // Inside return true if point `p` is inside border box, but not on border.
 // Or another case return false.
-func (box *BorderBox) Inside(p point.Point) bool {
+func (box *BorderBox) Inside(p Point) bool {
 	if p.X < box.Xmin ||
 		p.X > box.Xmax ||
 		p.Y < box.Ymin ||

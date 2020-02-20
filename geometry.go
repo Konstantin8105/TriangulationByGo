@@ -4,8 +4,6 @@ import (
 	"log"
 	"math"
 	"os"
-
-	"github.com/Konstantin8105/tp/point"
 )
 
 func eps() float64 {
@@ -25,7 +23,7 @@ const (
 	resultIsMoreZero
 )
 
-func calculateDouble(p1, p2, p3 point.Point) float64 {
+func calculateDouble(p1, p2, p3 Point) float64 {
 	v := (p2.Y-p1.Y)*(p3.X-p2.X) - (p3.Y-p2.Y)*(p2.X-p1.X)
 	if debugFlag {
 		logger.Printf("calculateDouble:\tp=%s\tp=%s\tp=%s\tv=%8.4f",
@@ -34,7 +32,7 @@ func calculateDouble(p1, p2, p3 point.Point) float64 {
 	return v
 }
 
-func calculateValuepointOnLine(p1, p2, p3 point.Point) pointLineState {
+func calculateValuepointOnLine(p1, p2, p3 Point) pointLineState {
 	value := calculateDouble(p1, p2, p3)
 	if value > eps() {
 		return resultIsMoreZero
@@ -45,7 +43,7 @@ func calculateValuepointOnLine(p1, p2, p3 point.Point) pointLineState {
 	return resultIsZero
 }
 
-func distanceLineAndPoint(lineP1 point.Point, lineP2 point.Point, p point.Point) float64 {
+func distanceLineAndPoint(lineP1 Point, lineP2 Point, p Point) float64 {
 	var (
 		A        float64
 		B        float64 = 1
@@ -70,7 +68,7 @@ func det(a [3][3]float64) float64 {
 		a[0][1]*a[1][0]*a[2][2] - a[1][2]*a[2][1]*a[0][0]
 }
 
-func isPointInCircle(circlePoints []point.Point, point *point.Point) bool {
+func isPointInCircle(circlePoints []Point, point *Point) bool {
 	var (
 		x1x float64 = circlePoints[0].X - point.X
 		y1y float64 = circlePoints[0].Y - point.Y
@@ -128,7 +126,7 @@ func (p pointTriangleState) String() string {
 	panic("add in String: point in Triangle")
 }
 
-func isNear(p1, p2 point.Point) bool {
+func isNear(p1, p2 Point) bool {
 	return math.Hypot(p1.X-p2.X, p1.Y-p2.Y) < eps()
 }
 

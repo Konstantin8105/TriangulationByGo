@@ -3,9 +3,6 @@ package tp
 import (
 	"container/list"
 	"fmt"
-
-	"github.com/Konstantin8105/tp/bb"
-	"github.com/Konstantin8105/tp/point"
 )
 
 // main data structure for triangulation
@@ -27,11 +24,11 @@ func (d *data) changeClockwise() {
 }
 
 type Triangulation struct {
-	ps []point.Point
+	ps []Point
 	ds *list.List
 }
 
-func New(ps ...point.Point) (tr *Triangulation, err error) {
+func NewTp(ps ...Point) (tr *Triangulation, err error) {
 	if len(ps) < 3 {
 		err = fmt.Errorf("not enougt input points")
 		return
@@ -40,7 +37,7 @@ func New(ps ...point.Point) (tr *Triangulation, err error) {
 	tr.ds = list.New()
 
 	// find border box
-	b := bb.New()
+	b := NewBB()
 	for i := range ps {
 		b.Add(ps[i])
 	}
@@ -64,11 +61,11 @@ func New(ps ...point.Point) (tr *Triangulation, err error) {
 	scale := 20.0
 	xSize := b.Xmax - b.Xmin
 	ySize := b.Ymax - b.Ymin
-	pps := []point.Point{ // pseudo-box points
-		point.Point{X: b.Xmin - scale*xSize, Y: b.Ymin - scale*ySize}, // P0
-		point.Point{X: b.Xmin - scale*xSize, Y: b.Ymax + scale*ySize}, // P1
-		point.Point{X: b.Xmax + scale*xSize, Y: b.Ymax + scale*ySize}, // P2
-		point.Point{X: b.Xmax + scale*xSize, Y: b.Ymin - scale*ySize}, // P3
+	pps := []Point{ // pseudo-box points
+		Point{X: b.Xmin - scale*xSize, Y: b.Ymin - scale*ySize}, // P0
+		Point{X: b.Xmin - scale*xSize, Y: b.Ymax + scale*ySize}, // P1
+		Point{X: b.Xmax + scale*xSize, Y: b.Ymax + scale*ySize}, // P2
+		Point{X: b.Xmax + scale*xSize, Y: b.Ymin - scale*ySize}, // P3
 	}
 	defer func() {
 		for i := range pps {
@@ -104,7 +101,7 @@ func New(ps ...point.Point) (tr *Triangulation, err error) {
 	return tr, nil
 }
 
-func (tr *Triangulation) remove(p point.Point) error {
+func (tr *Triangulation) remove(p Point) error {
 	return fmt.Errorf("add implementation for remove")
 }
 
